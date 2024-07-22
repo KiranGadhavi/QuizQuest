@@ -1,4 +1,5 @@
 body{
+   
     height: 100%;
     font-family: Arial, sans-serif;
     background: radial-gradient(circle at top left, #f2cef8, #28b9d5);
@@ -6,35 +7,40 @@ body{
     background-repeat: no-repeat;
     color: whitesmoke;
     }
-/* .headerContainer{
-    position: fixed;
-    height: 40rem;
-    margin-bottom: 10rem;
-} */
+
 .question{
     display: grid;
-    grid-template-rows: 1fr;
-    margin-top: 3rem;
+    grid-template-columns: auto;
+    margin: 4rem;
     cursor: pointer;
     color: black;
-    text-align: left;
-    padding: 1.5rem;
+    padding: 1rem;
     background: radial-gradient(circle at top left, #f2cef8, #ceeaf2);
-   border-left: 10px solid #cee4ec;
- 
-  
+    border-left: 10px solid #cee4ec;
+    border-right: 10px solid #cee4ec;
 }
 
 .question:hover{
-    color: white;
-    background: #b6acb3;
-   border-left: 10px solid #e8e8ee;
+    color: black;
+    background: radial-gradient(circle at top left, #e9abf4, #7fd9f5);
+    border-left: 10px solid #e8e8ee;
+    border-right: 10px solid #e8e8ee;
+
+
+}
+.labelParent{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem; /* Adjust the gap between items */
+    padding: 20px;
+    justify-items: center;
+    align-items: center;
+    text-align: left;
 
 }
 .questionlabel{
-    display: grid;
-    grid-template-rows: 1fr ;
-    margin-top: 1rem;
+    padding: 10px;
+    width: 70%;
     cursor: pointer;
     color: black;
     text-align: left;
@@ -45,8 +51,10 @@ body{
   
 }
 .questionlabel:hover{
-    color: white;
-    background: #b6acb3;
+    color: black;
+    background: radial-gradient(circle at top left, #e9abf4, #7fd9f5);
+    /* color: white;
+   background: #b6acb3; */
    border-left: 10px solid #e8e8ee;
 
 }
@@ -54,11 +62,15 @@ body{
     margin-right: 0.6rem;
 }
 .btn{
-    margin-top: 4rem;
+    margin:  1rem 0  2.1rem 0;
     padding: 1rem;
     border: none;
     border-radius: 10px;
     width: 15rem;
     background-color: #0a2a30;
     color: whitesmoke;
+    cursor: pointer;
+}
+.btn:hover{
+    background-color: #153c43;   
 }
