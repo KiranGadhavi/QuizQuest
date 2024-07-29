@@ -12,6 +12,7 @@
             <img height="80px" width="80px" src="34.jpg"/></div>
     </header>
     <main>
+        <div class="show quizSelector">
         <div>
             <div class="question">
                 <h3 class="questionFirst"></h3></div>
@@ -21,9 +22,44 @@
             </div>
  </div>
    
-<div class="main_container_child2">
+<div class="show main_container_child2">
     <button id="btn_submit" class="btn">Submit Answer</button>
 </div>
+</div>
+<!-- Correct page -->
+<div class="hide rightAnswer">
+    <div class="solutionContainer">
+    <h1>✅ Correct ✅</h1>
+    <p>Congratulations! You have successfully answered the question.
+    </p>
+</div>
+    <div class="main_container_child2 btnGap">
+        <button class="btn">Next Question</button>
+    </div>
+</div>   
+<!-- Incorrect Page -->
+
+<div class="hide wrongAnswer inCorrectCont">
+    <div class="solutionContainer"></div>
+    <h1>❌ Incorrect ❌</h1>
+    <span>Looks like you go that one wrong! Here's the correct answer:
+    </span>
+    <div class="">
+        <h3 class="questionFirst"></h3></div>
+    </div>
+    <p class="">Answer: Paris
+    </p> 
+    <div class="main_container_child2 btnGap">
+        <button class="btn">Next Question</button>
+    </div>
+</div> 
+<!-- Game Over page -->
+ <div class="hide">
+    <h1>😭 Game Over 😭</h1>
+    <div class="main_container_child2">
+        <button class="btn">Try Again</button>
+    </div>
+    </div>
         </main>
     <script src="main.js"></script>
 </body>

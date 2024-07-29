@@ -53,16 +53,36 @@ async function fetchQuizQuestions() {
           alert('Please select an answer.');
           return;
       }
-
+      const wrong_answer = document.querySelector('.wrongAnswer');
+      const right_answer = document.querySelector('.rightAnswer');
+      const quizSelector = document.querySelector('.quizSelector');
       const selectedAnswer = selectedRadio.value;
       // Check if selected answer is correct
       if (selectedAnswer === CorectAns) {
           pass();
-          alert('pass answer.');
+          alert('Correct answer.');
+
+          if (right_answer) {
+            right_answer.classList.remove('hide');
+            right_answer.classList.add('show');
+            }
+            if (quizSelector) {
+          
+            quizSelector.classList.remove('show');
+            quizSelector.classList.add('hide');
+            }
 
       } else {
         fail()
-        alert('fail answer.');
+        alert('Wrong answer.');
+        if (wrong_answer) {
+          wrong_answer.classList.remove('hide');
+            wrong_answer.classList.add('show');
+          }
+          if (quizSelector) {
+            quizSelector.classList.remove('show');
+            quizSelector.classList.add('hide');
+          }
 
       }
         console.log(CorectAns);

@@ -1,11 +1,17 @@
-body{
-   
+html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
+}
+body{
+    position: relative;
     font-family: Arial, sans-serif;
     background: radial-gradient(circle at top left, #f2cef8, #28b9d5);
     text-align: center;
     background-repeat: no-repeat;
     color: whitesmoke;
+    background-size: cover;
+    background-position: center;
     }
 
 .question{
@@ -28,6 +34,13 @@ body{
 
 
 }
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
+}
 .labelParent{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -40,7 +53,7 @@ body{
 }
 .questionlabel{
     padding: 10px;
-    width: 70%;
+    width: 80%;
     cursor: pointer;
     color: black;
     text-align: left;
@@ -62,15 +75,22 @@ body{
     margin-right: 0.6rem;
 }
 .btn{
-    margin:  1rem 0  2.1rem 0;
+    margin:  2rem 0  2.1rem 0;
     padding: 1rem;
     border: none;
     border-radius: 10px;
-    width: 15rem;
+    width: 25rem;
     background-color: #0a2a30;
     color: whitesmoke;
     cursor: pointer;
 }
 .btn:hover{
     background-color: #153c43;   
+}
+.solutionContainer{
+    padding-top: 5rem;
+}
+.btnGap{
+    margin-top: 5rem;
+
 }
