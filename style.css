@@ -11,6 +11,20 @@
         margin: 0;
         padding: 0;
     }
+    .blurry-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+  
 /* Hide and Show different screen */
 .show {
     display: block;
@@ -22,7 +36,7 @@
 
 /* button styling */
 .btn{
-    margin:  2rem 0 3rem 0;
+    margin:  2rem 0 0 0;
     padding: 1rem;
     border: none;
     border-radius: 10px;
@@ -44,10 +58,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.btnGap{
+/* .btnGap{
     margin-top: 5rem;
 
-}
+} */
 /* question style transition */
 
 .question {
@@ -55,9 +69,11 @@
     grid-template-columns: auto;
     position: relative;
     z-index: 1;
-    margin: 4rem;
+    margin: 3rem;
     color: black;
+    border-radius: 15px;
     padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background: radial-gradient(circle at top left, #f2cef8, #ceeaf2);
     border-left: 10px solid #cee4ec;
     border-right: 10px solid #cee4ec;
@@ -119,6 +135,8 @@
     color: black;
     text-align: left;
     padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background: radial-gradient(circle at top left, #f2cef8, #ceeaf2);
     border-left: 10px solid #cee4ec;
     overflow: hidden;
@@ -154,14 +172,7 @@
     padding-top: 5rem;
 }
 /* progressScore */
-.progressScore{
-    margin-top: 2rem;
-    display: flex;
-    justify-content: center;
-    /* align-items: center; */
-    flex-direction: row;
-    gap: 1rem;
-}
+
 .progressScoreChild{
     display: flex;
     justify-content: center;
@@ -169,3 +180,34 @@
     flex-direction: column;
     gap: 1rem;
 }
+.progressScore {
+    margin-top: 2rem;
+    color: black;
+    font: 1.5rem;
+    display: flex;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    /* background: linear-gradient(135deg, #e9abf4, #88d3ce); */
+    background: radial-gradient(circle at top left, #f2f6bc, #b4f983);
+    /* background: radial-gradient(circle at top left, #e9abf4, #7fd9f5); */
+    flex-direction: row;
+    gap: 1.5rem;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    animation: blink 2s infinite;
+}
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+/* .progressScore:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+} */

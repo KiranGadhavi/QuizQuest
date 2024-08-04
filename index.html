@@ -7,9 +7,12 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="start-screen" class="blurry-overlay ">
+        <button id="start-button" class="btn">Start Quiz</button>
+    </div>
     <header>
         <div class="headerContainer"><h1 class="headDesign">🤴Quiz Challenges👸</h1>
-        <img height="80px" width="80px" src="assets/34.jpg"/></div>
+        <!-- <img height="80px" width="80px" src="assets/34.jpg"/></div> -->
         <!-- <div id="score-display">Score: <span id="current-score"></span></div> -->
     </header>
     <main>
@@ -22,17 +25,17 @@
     
     <div class="progressScoreChild">
     <span>🎯 Score</span>
-    <b><span id="current-score"> </span></b>
+    <span id="current-score"> </span>
     </div>
    
     <div class="progressScoreChild">
     <span>🚦Lives </span>
-    <span id="lives">Left</span>    
+    <span id="lives"></span>    
     </div>
 
     <div class="progressScoreChild">
     <span>⏱️ Timer</span>
-    <span id="timer">15s</span>
+    <span id="timer"></span>
     </div>
  </div>
  <!-- Quiz Selector -->
@@ -72,7 +75,7 @@
     <span class="class="correctAnswer></span>
     </div>
     <div class="main_container_child2 btnGap">
-        <button id="next_question_btn" class="btn">Next Question</button>
+        <button id="next_question_btn_Incrt" class="btn">Next Question</button>
     </div>
 </div>
 
@@ -82,8 +85,8 @@
 
  <div class="hide gameOver">
     <h1>😭 Game Over 😭</h1>
-    <div class="main_container_child2">
-        <button class="btn">Try Again</button>
+    <div class="main_container_child2 btnGap">
+        <button id="tryAgain" class="btn">Try Again</button>
     </div>
     </div>
         </main>
