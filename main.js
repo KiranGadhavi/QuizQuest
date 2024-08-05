@@ -15,8 +15,8 @@ let Lives = 3;
 LivesElement.textContent = `${Lives}/3`;
 //timer
 let TimerElement = document.querySelector('#timer') 
-let Timer = 60;
-TimerElement.textContent = `${Timer}s`;
+let timeLeft = 60;
+TimerElement.textContent = `${timeLeft}s`;
 
 document.addEventListener('DOMContentLoaded', function() {
     const startScreen = document.getElementById('start-screen');
@@ -38,11 +38,13 @@ function updateTimer() {
     }
 }
 function handleTimeUp() {
+    
     Lives--;
     updateLivesDisplay();
     if (Lives > 0 && currentQuestionIndex < quizData.length - 1) {
         loadNextQuestion();
     } else if (Lives <= 0) {
+        alert('Time is up!');
         const gameOver = document.querySelector('.gameOver');
         document.querySelector('.quizSelector').classList.add('hide');
         gameOver.classList.remove('hide');
@@ -63,6 +65,7 @@ function updateLivesDisplay() {
     if (LivesElement) {
         LivesElement.textContent = `${Lives}/3`;
     }
+    console.log('Current Lives:', Lives); 
 }
 
 function updateScoreDisplay() {
@@ -79,8 +82,11 @@ function updateScoreDisplay() {
 
 let currentQuestionIndex = 0;
 let quizData = [];
-
+let isSubmitting = false;
 function handleSubmit(correctAnswer) {
+    if (isSubmitting) return;
+    isSubmitting = true;
+
     const selectedRadio = document.querySelector('input[name=answer]:checked');
     if (!selectedRadio) {
         alert('Please select an answer.');
@@ -102,7 +108,8 @@ function handleSubmit(correctAnswer) {
       showResult(right_answer, 'Correct answer.');
         console.log(score);
     } else {
-        // updateLivesDisplay
+        Lives--;
+        updateLivesDisplay();
         if(Lives <= 0){
     const gameOver = document.querySelector('.gameOver');
             quizSelector.classList.add('hide');
@@ -111,13 +118,12 @@ function handleSubmit(correctAnswer) {
             console.log("Game Over - Out of Lives");
             return;
         }
-        Lives--;
-        updateLivesDisplay();
         showResult(wrong_answer, 'Wrong answer.');
     }
 
     quizSelector.classList.remove('show');
     quizSelector.classList.add('hide');
+    isSubmitting = false;
     
 }
 function startTimer() {
@@ -130,13 +136,16 @@ function showResult(element) {
     element.classList.add('show');
     // alert(message);
 }
-
+let submitListenerAdded = false;
 function initQuiz() {
     const btnSubmit = document.querySelector('#btn_submit');
-    btnSubmit.addEventListener('click', function(e) {
-        e.preventDefault();
-        handleSubmit(quizData[currentQuestionIndex].correctAnswer);
-    });
+    if (!submitListenerAdded) {
+        btnSubmit.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleSubmit(quizData[currentQuestionIndex].correctAnswer);
+        });
+        submitListenerAdded = true;
+    }
 }
 
 async function fetchQuizQuestions() {
@@ -162,7 +171,7 @@ function renderQuestion(questionData) {
     labelContainerParent.innerHTML = '';
     
     const allAnswers = [questionData.correctAnswer, ...questionData.incorrectAnswers].sort(() => Math.random() - 0.5);
-    console.log(questionData.correctAnswer);
+    // console.log(questionData.correctAnswer);
     
     allAnswers.forEach(answer => {
         const labelContainer = createAnswerElement(answer);
@@ -220,8 +229,7 @@ nextQuestionBtn.addEventListener('click', loadNextQuestion);
 
 function loadNextQuestionInCrt() {
     clearTimer();
-    Lives--;
-    updateLivesDisplay();
+    // updateLivesDisplay();
     
     if(Lives <= 0){
         const gameOver = document.querySelector('.gameOver');
@@ -265,7 +273,14 @@ function loadGameAgain() {
     score = 0;
     Progress = 0;
     Lives = 3;
-    Timer = 60;
+    timeLeft = 60;
+    currentQuestionIndex = 0;
+    isSubmitting = false;
+    submitListenerAdded = false;
+
+    updateScoreDisplay();
+    updateLivesDisplay(); 
+
     const quizSelector = document.querySelector('.quizSelector');
     const wrongAnswer = document.querySelector('.wrongAnswer');
     const rightAnswer = document.querySelector('.rightAnswer');
@@ -276,13 +291,14 @@ function loadGameAgain() {
 
     quizSelector.classList.remove('hide');
     quizSelector.classList.add('show');
-    currentQuestionIndex = 0;
+
     renderQuestion(quizData[currentQuestionIndex]);
+    initQuiz();
     console.log("Game restarted");
     // Handle restart of game here
 }
 
 const TryAgain = document.querySelector('#tryAgain');
-nextQuestionBtnInCrt.addEventListener('click', loadGameAgain);
+TryAgain.addEventListener('click', loadGameAgain);
 
 fetchQuizQuestions();
