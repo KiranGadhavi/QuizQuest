@@ -120,13 +120,6 @@ function showResult(selector) {
     element.classList.add('show');
 }
 
-// function initQuiz() {
-//     document.querySelector('#btn_submit')
-//     .addEventListener('click', (e) => {
-//         e.preventDefault();
-//         handleSubmit(quizData[gameState.currentQuestionIndex].correctAnswer);
-//     });
-// }
 function initQuiz() {
     const btnSubmit = document.querySelector('#btn_submit');
     btnSubmit.removeEventListener('click', handleSubmitWrapper);
@@ -154,6 +147,7 @@ function renderQuestion(questionData) {
     
     const allAnswers = [questionData.correctAnswer, ...questionData.incorrectAnswers].sort(() => Math.random() - 0.5);
     // console.log(questionData.correctAnswer);
+    document.querySelector("#correctAnswer").textContent = questionData.correctAnswer;
     
     allAnswers.forEach(answer => {
         labelContainerParent.appendChild(createAnswerElement(answer));
