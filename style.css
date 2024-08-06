@@ -35,7 +35,7 @@
 }
 
 /* button styling */
-.btn{
+/* .btn{
     margin:  2rem 0 0 0;
     padding: 1rem;
     border: none;
@@ -46,6 +46,33 @@
     cursor: pointer;
     cursor: pointer;
     transition: all 0.3s ease;
+} */
+.btn {
+    margin: 5vh 0 0 0;
+    padding: 2vh 4vw;
+    border: none;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 25rem;
+    background-color: #0a2a30;
+    color: whitesmoke;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+@media screen and (min-width: 768px) {
+    .btn {
+        width: 60%;
+        font-size: 0.8rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .btn {
+        width: 40%;
+        font-size: 1rem;
+    }
 }
 .btn:hover{
     background-color: #153c43; 
@@ -58,10 +85,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* .btnGap{
-    margin-top: 5rem;
 
-} */
 /* question style transition */
 
 .question {
@@ -211,3 +235,50 @@
     transform: translateY(-5px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 } */
+
+.wellDone h1 {
+    font-size: 10vw; /* Responsive font size */
+    font-size: 2rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    animation: pulse 1.5s infinite alternate;
+    text-align: center;
+    margin-top: 5rem;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+
+.wellDone {
+    
+    background: linear-gradient(45deg, #c6d6b9, #ba71e5);
+    /* padding: 0.5rem; */
+    height: 13rem;
+    /* padding-top: 1px; */
+    margin: 2rem auto;
+    width: 50%;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.wellDone::before,
+.wellDone::after {
+    font-size: 1rem;
+    position: absolute;
+    top: 1rem;
+}
+
+.wellDone::before {
+    left: 1rem;
+}
+
+.wellDone::after {
+    right: 1rem;
+}

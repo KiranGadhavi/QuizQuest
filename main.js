@@ -1,304 +1,252 @@
-// document.addEventListener('DOMContentLoaded', function() {
-// Your initialization code here
-//score
-let scoreElement = document.querySelector('#current-score') ;
-let score = 0;
-scoreElement.textContent = `${score}/100`;
-//progress bar
-let ProgressElement = document.querySelector('#progress') ;
-let Progress = 0;
-ProgressElement.textContent = `${Progress}/10`;
-console.log(Progress);
-//lives
-let LivesElement = document.querySelector('#lives') ;
-let Lives = 3; 
-LivesElement.textContent = `${Lives}/3`;
-//timer
-let TimerElement = document.querySelector('#timer') 
-let timeLeft = 60;
-TimerElement.textContent = `${timeLeft}s`;
+
+let gameState = {
+    score: 0,
+    Progress: 0,
+    Lives: 3,
+    timeLeft: 60,
+    currentQuestionIndex: 0,
+    isSubmitting: false,
+    lastLifeLossTime: 0
+};
+
+let elements = {
+    score: document.querySelector('#current-score'),
+    progress: document.querySelector('#progress'),
+    lives: document.querySelector('#lives'),
+    timer: document.querySelector('#timer'),
+    quizSelector: document.querySelector('.quizSelector'),
+    gameOver: document.querySelector('.gameOver'),
+    wellDone: document.querySelector('.wellDone')
+};
+
+let quizData = [];
+let timerInterval;
+
+function updateDisplays() {
+    elements.score.textContent = `${gameState.score}/100`;
+    elements.progress.textContent = `${gameState.Progress}/10`;
+    elements.lives.textContent = `${gameState.Lives}/3`;
+    elements.timer.textContent = `${gameState.timeLeft}s`;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-    const startScreen = document.getElementById('start-screen');
-    const startButton = document.getElementById('start-button');
-
-    startButton.addEventListener('click', function() {
-        startScreen.style.display = 'none';
-        fetchQuizQuestions();
-        // startTimer();
-    });
+    document.getElementById('start-button').addEventListener('click', startQuiz);
+    updateDisplays();
 });
+
+async function startQuiz() {
+    document.getElementById('start-screen').style.display = 'none';
+    await fetchQuizQuestions();
+    renderQuestion(quizData[gameState.currentQuestionIndex]);
+    initQuiz();
+    startTimer();
+}
+
 function updateTimer() {
-    if (timeLeft > 0) {
-        timeLeft--;
-        TimerElement.textContent = `${timeLeft}s`;
+    if (gameState.timeLeft > 0) {
+        gameState.timeLeft--;
+        elements.timer.textContent = `${gameState.timeLeft}s`;
     } else {
-        clearInterval(timerInterval);
         handleTimeUp();
     }
 }
+
 function handleTimeUp() {
-    
-    Lives--;
-    updateLivesDisplay();
-    if (Lives > 0 && currentQuestionIndex < quizData.length - 1) {
-        loadNextQuestion();
-    } else if (Lives <= 0) {
-        alert('Time is up!');
-        const gameOver = document.querySelector('.gameOver');
-        document.querySelector('.quizSelector').classList.add('hide');
-        gameOver.classList.remove('hide');
-        gameOver.classList.add('show');
-        console.log("Game Over - Out of Lives");
-    } else if (currentQuestionIndex === quizData.length - 1) {
-        console.log("Quiz finished");
-        // Handle end of quiz here
-        // You might want to show a quiz completion screen
-    }
-    
     clearTimer();
+    decreaseLives();
+    if (gameState.Lives > 0) {
+        loadNextQuestion();
+    } else {
+        endGame();
+    }
 }
+
 function clearTimer() {
     clearInterval(timerInterval);
 }
-function updateLivesDisplay() {
-    if (LivesElement) {
-        LivesElement.textContent = `${Lives}/3`;
-    }
-    console.log('Current Lives:', Lives); 
+
+function startTimer() {
+    gameState.timeLeft = 60;
+    elements.timer.textContent = `${gameState.timeLeft}s`;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
 }
 
-function updateScoreDisplay() {
-    if (scoreElement) {
-        scoreElement.textContent = `${score}/100`;
+function decreaseLives() {
+    const currentTime = Date.now();
+    if (currentTime - gameState.lastLifeLossTime > 1000) {
+        gameState.Lives = Math.max(0, gameState.Lives - 1);
+        gameState.lastLifeLossTime = currentTime;
+        updateDisplays();
+        // console.log('Current Lives:', gameState.Lives);
     }
-    if (ProgressElement) {
-        ProgressElement.textContent = `${Progress}/10`;
-        console.log(Progress);
+}
 
-    }}
-// });
-
-
-let currentQuestionIndex = 0;
-let quizData = [];
-let isSubmitting = false;
 function handleSubmit(correctAnswer) {
-    if (isSubmitting) return;
-    isSubmitting = true;
+    if (gameState.isSubmitting || gameState.Lives <= 0) return;
+    gameState.isSubmitting = true;
+    clearTimer();
 
     const selectedRadio = document.querySelector('input[name=answer]:checked');
     if (!selectedRadio) {
         alert('Please select an answer.');
+        gameState.isSubmitting = false;
+        startTimer();
         return;
     }
 
-    const wrong_answer = document.querySelector('.wrongAnswer');
-    const right_answer = document.querySelector('.rightAnswer');
-    const quizSelector = document.querySelector('.quizSelector');
     const selectedAnswer = selectedRadio.value;
-
     if (selectedAnswer === correctAnswer) {
-    //   updateScoreDisplay
-      score+= 10;
-    // updateProgressDisplay
-      Progress++;
-      updateScoreDisplay();
-
-      showResult(right_answer, 'Correct answer.');
-        console.log(score);
+        gameState.score += 10;
+        gameState.Progress++;
+        showResult('.rightAnswer');
     } else {
-        Lives--;
-        updateLivesDisplay();
-        if(Lives <= 0){
-    const gameOver = document.querySelector('.gameOver');
-            quizSelector.classList.add('hide');
-            gameOver.classList.remove('hide');
-            gameOver.classList.add('show');
-            console.log("Game Over - Out of Lives");
+        decreaseLives();
+        if (gameState.Lives <= 0) {
+            endGame();
             return;
         }
-        showResult(wrong_answer, 'Wrong answer.');
+        showResult('.wrongAnswer');
     }
 
-    quizSelector.classList.remove('show');
-    quizSelector.classList.add('hide');
-    isSubmitting = false;
-    
+    updateDisplays();
+    elements.quizSelector.classList.add('hide');
+    gameState.isSubmitting = false;
 }
-function startTimer() {
-    timeLeft = 60; // Reset timer for each question
-    TimerElement.textContent = `${timeLeft}s`;
-    timerInterval = setInterval(updateTimer, 1000);
-}
-function showResult(element) {
+
+function showResult(selector) {
+    const element = document.querySelector(selector);
     element.classList.remove('hide');
     element.classList.add('show');
-    // alert(message);
-}
-let submitListenerAdded = false;
-function initQuiz() {
-    const btnSubmit = document.querySelector('#btn_submit');
-    if (!submitListenerAdded) {
-        btnSubmit.addEventListener('click', function(e) {
-            e.preventDefault();
-            handleSubmit(quizData[currentQuestionIndex].correctAnswer);
-        });
-        submitListenerAdded = true;
-    }
 }
 
+// function initQuiz() {
+//     document.querySelector('#btn_submit')
+//     .addEventListener('click', (e) => {
+//         e.preventDefault();
+//         handleSubmit(quizData[gameState.currentQuestionIndex].correctAnswer);
+//     });
+// }
+function initQuiz() {
+    const btnSubmit = document.querySelector('#btn_submit');
+    btnSubmit.removeEventListener('click', handleSubmitWrapper);
+    btnSubmit.addEventListener('click', handleSubmitWrapper);
+}
+
+function handleSubmitWrapper(e) {
+    e.preventDefault();
+    handleSubmit(quizData[gameState.currentQuestionIndex].correctAnswer);
+}
 async function fetchQuizQuestions() {
     try {
         const url = 'https://the-trivia-api.com/api/questions?limit=10&difficulty=medium&categories=general_knowledge';
         const response = await fetch(url);
         quizData = await response.json();
-        
-        renderQuestion(quizData[currentQuestionIndex]);
-        initQuiz();
-        
-        return quizData[currentQuestionIndex];
     } catch (error) {
         console.error("Error fetching quiz questions:", error);
     }
 }
 
 function renderQuestion(questionData) {
-    const questionElement = document.querySelector(".questionFirst");
+    document.querySelector(".questionFirst").textContent = questionData.question;
     const labelContainerParent = document.querySelector("#first_item");
-    
-    questionElement.textContent = questionData.question;
     labelContainerParent.innerHTML = '';
     
     const allAnswers = [questionData.correctAnswer, ...questionData.incorrectAnswers].sort(() => Math.random() - 0.5);
     // console.log(questionData.correctAnswer);
     
     allAnswers.forEach(answer => {
-        const labelContainer = createAnswerElement(answer);
-        labelContainerParent.appendChild(labelContainer);
+        labelContainerParent.appendChild(createAnswerElement(answer));
     });
+    
+    elements.quizSelector.classList.remove('hide');
     startTimer();
 }
 
 function createAnswerElement(answer) {
     const labelContainer = document.createElement('div');
     labelContainer.className = 'questionlabel';
-
-    const input = document.createElement('input');
-    input.className = 'circle_border';
-    input.type = 'radio';
-    input.name = 'answer';
-    input.value = answer;
-
-    const label = document.createElement('label');
-    label.append(input);
-    label.append(answer);
-    labelContainer.appendChild(label);
-
+    labelContainer.innerHTML = `
+        <label>
+            <input class="circle_border" type="radio" name="answer" value="${answer}">
+            ${answer}
+        </label>
+    `;
     return labelContainer;
 }
 
 function loadNextQuestion() {
     clearTimer();
-    console.log("Next button clicked");
-    const quizSelector = document.querySelector('.quizSelector');
-    const wrongAnswer = document.querySelector('.wrongAnswer');
-    const rightAnswer = document.querySelector('.rightAnswer');
+    document.querySelector('.wrongAnswer').classList.add('hide');
+    document.querySelector('.rightAnswer').classList.add('hide');
+    elements.quizSelector.classList.remove('hide');
 
-    wrongAnswer.classList.add('hide');
-    rightAnswer.classList.add('hide');
-
-    quizSelector.classList.remove('hide');
-    quizSelector.classList.add('show');
-
-
-    currentQuestionIndex++;
-    if (currentQuestionIndex < quizData.length) {
-        renderQuestion(quizData[currentQuestionIndex]);
-    } else if (currentQuestionIndex === quizData.length) {
-      // Handle end of quiz
-    quizSelector.classList.add('hide');
-
-        console.log("Quiz finished");
-        // Handle end of quiz here
+    gameState.currentQuestionIndex++;
+    if (gameState.currentQuestionIndex < quizData.length) {
+        renderQuestion(quizData[gameState.currentQuestionIndex]);
+    } else {
+        endGame();
     }
 }
 
-const nextQuestionBtn = document.querySelector('#next_question_btn');
-nextQuestionBtn.addEventListener('click', loadNextQuestion);
-
-function loadNextQuestionInCrt() {
+function endGame() {
     clearTimer();
-    // updateLivesDisplay();
-    
-    if(Lives <= 0){
-        const gameOver = document.querySelector('.gameOver');
-        document.querySelector('.quizSelector').classList.add('hide');
-        gameOver.classList.remove('hide');
-        gameOver.classList.add('show');
-        console.log("Game Over - Out of Lives");
-        return;
+    if (gameState.currentQuestionIndex === quizData.length && gameState.Lives > 0) {
+        showWellDoneScreen();
+    } else if (gameState.Lives <= 0) {
+        showGameOverScreen();
     }
-    console.log("Next In correct button clicked");
-    const quizSelector = document.querySelector('.quizSelector');
-    const wrongAnswer = document.querySelector('.wrongAnswer');
-    const rightAnswer = document.querySelector('.rightAnswer');
-    const gameOver = document.querySelector('.gameOver');
-
-    wrongAnswer.classList.add('hide');
-    rightAnswer.classList.add('hide');
-    gameOver.classList.add('hide');
-
-    quizSelector.classList.remove('hide');
-    quizSelector.classList.add('show');
-
-    currentQuestionIndex++;
-   
-    console.log('Lives', Lives);
-    if (currentQuestionIndex < quizData.length) {
-        renderQuestion(quizData[currentQuestionIndex]);
-    }
-     else if (currentQuestionIndex === quizData.length) {
-      // Handle end of quiz
-        console.log("Quiz finished");
-        // Handle end of quiz here
-    }
-   
-   
 }
-const nextQuestionBtnInCrt = document.querySelector('#next_question_btn_Incrt');
-nextQuestionBtnInCrt.addEventListener('click', loadNextQuestionInCrt);
 
-function loadGameAgain() {
-    score = 0;
-    Progress = 0;
-    Lives = 3;
-    timeLeft = 60;
-    currentQuestionIndex = 0;
-    isSubmitting = false;
-    submitListenerAdded = false;
+function showWellDoneScreen() {
+    elements.quizSelector.classList.add('hide');
+    elements.wellDone.classList.remove('hide');
+    elements.wellDone.classList.add('show');
+    // console.log("Well Done! Quiz completed successfully");
+}
 
-    updateScoreDisplay();
-    updateLivesDisplay(); 
+function showGameOverScreen() {
+    elements.quizSelector.classList.add('hide');
+    elements.gameOver.classList.remove('hide');
+    // console.log("Game Over - Out of Lives");
+}
 
-    const quizSelector = document.querySelector('.quizSelector');
-    const wrongAnswer = document.querySelector('.wrongAnswer');
-    const rightAnswer = document.querySelector('.rightAnswer');
-    const gameOver = document.querySelector('.gameOver');
-    wrongAnswer.classList.add('hide');
-    rightAnswer.classList.add('hide');
-    gameOver.classList.add('hide');
+function resetGameState() {
+    gameState = {
+        score: 0,
+        Progress: 0,
+        Lives: 3,
+        timeLeft: 60,
+        currentQuestionIndex: 0,
+        isSubmitting: false,
+        lastLifeLossTime: 0
+    };
+    updateDisplays();
+}
 
-    quizSelector.classList.remove('hide');
-    quizSelector.classList.add('show');
+async function loadGameAgain() {
+    clearTimer();
+    resetGameState();
 
-    renderQuestion(quizData[currentQuestionIndex]);
+    document.querySelectorAll('.hide').forEach(el => el.classList.remove('show'));
+    elements.quizSelector.classList.remove('hide');
+    elements.gameOver.classList.add('hide');
+    elements.wellDone.classList.add('hide');
+
+    await fetchQuizQuestions();
+    renderQuestion(quizData[gameState.currentQuestionIndex]);
     initQuiz();
-    console.log("Game restarted");
-    // Handle restart of game here
+    // console.log("Game restarted");
 }
-
-const TryAgain = document.querySelector('#tryAgain');
-TryAgain.addEventListener('click', loadGameAgain);
-
-fetchQuizQuestions();
+function setupEventListeners() {
+document.querySelector('#next_question_btn').addEventListener('click', loadNextQuestion);
+document.querySelector('#next_question_btn_Incrt').addEventListener('click', loadNextQuestion);
+document.querySelector('#tryAgain').addEventListener('click', () => {
+    loadGameAgain().catch(error => console.error("Error restarting game:", error));
+});
+document.querySelector('#tryAgainWellDone').addEventListener('click', () => {
+    loadGameAgain().catch(error => console.error("Error restarting game:", error));
+});
+}
+// Call this function once when the page loads
+document.addEventListener('DOMContentLoaded', setupEventListeners);
